@@ -2,6 +2,17 @@
 
 SowaanERP Supabase
 
+This app syncs call and contact data from Supabase to ERPNext Lead records.
+
+## Requirements
+
+1. Add `host_name` to your `site_config.json`:
+   
+   ```json
+   {
+     "host_name": "https://your-erp-site.com"
+   }
+
 ### Installation
 
 You can install this app using the [bench](https://github.com/frappe/bench) CLI:

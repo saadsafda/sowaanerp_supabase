@@ -43,7 +43,7 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Employee" : "public/js/employee.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -148,23 +148,23 @@ app_license = "mit"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
+scheduler_events = {
 # 	"all": [
 # 		"sowaanerp_supabase.tasks.all"
 # 	],
 # 	"daily": [
 # 		"sowaanerp_supabase.tasks.daily"
 # 	],
-# 	"hourly": [
-# 		"sowaanerp_supabase.tasks.hourly"
-# 	],
+	"hourly": [
+		"sowaanerp_supabase.api.sync_calls_to_leads"
+	],
 # 	"weekly": [
 # 		"sowaanerp_supabase.tasks.weekly"
 # 	],
 # 	"monthly": [
 # 		"sowaanerp_supabase.tasks.monthly"
 # 	],
-# }
+}
 
 # Testing
 # -------
