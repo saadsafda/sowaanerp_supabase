@@ -3,6 +3,8 @@ import frappe
 
 from supabase import create_client, Client
 from datetime import datetime
+from frappe.desk.form.assign_to import add as add_assignment
+
 
 
 
@@ -157,15 +159,27 @@ def sync_calls_to_leads():
     for contact in contacts:
         contact_id = contact.get("id", None)
         phone = contact.get("phone")
-        name = contact.get("name", "Unknown Caller")
+        name = contact.get("name", str(phone))
+        assign_uid = contact.get("assign")
         print(f"Processing contact: {contact_id} with phone: {phone}")
+
+        assign_email = get_user_email(assign_uid) if assign_uid else None   
         
         lead = frappe.db.exists("Lead", {"phone": phone})
         if lead:
             call_notes_response = supabase.table("Calls").select("*").eq("contact_id", contact_id).eq("company_id", company_name).execute()
             call_notes = call_notes_response.data
 
-            
+            if assign_email:
+                try:
+                    add_assignment({
+                        "assign_to": [assign_email],
+                        "doctype": "Lead",
+                        "name": lead,
+                        "description": f"Lead assigned from contact {contact_id}"
+                    })
+                except Exception as e:
+                    frappe.log_error(f"Failed to assign Lead {lead.name} to {assign_email}: {str(e)}")
             if call_notes:
                 lead_doc = frappe.get_doc("Lead", lead)
                 lead_doc.notes = []
@@ -188,11 +202,21 @@ def sync_calls_to_leads():
                 frappe.db.commit()
         else:
             lead_doc = frappe.new_doc("Lead")
-            lead_doc.first_name = name
+            lead_doc.first_name = name if name else str(phone)
             lead_doc.phone = phone
             call_notes_response = supabase.table("Calls").select("*").eq("contact_id", contact_id).execute()
             call_notes = call_notes_response.data
 
+            if assign_email:
+                try:
+                    add_assignment({
+                        "assign_to": [assign_email],
+                        "doctype": "Lead",
+                        "name": lead_doc.name,
+                        "description": f"Lead assigned from contact {contact_id}"
+                    })
+                except Exception as e:
+                    frappe.log_error(f"Failed to assign Lead {lead_doc.name} to {assign_email}: {str(e)}")
             
             if call_notes:
                 for note in call_notes:
@@ -210,6 +234,7 @@ def sync_calls_to_leads():
                         "added_by": added_by_email,
                         "added_on": created_at,
                     })
+            
             lead_doc.save()
             frappe.db.commit()
 
