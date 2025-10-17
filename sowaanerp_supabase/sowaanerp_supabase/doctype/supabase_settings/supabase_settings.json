@@ -9,7 +9,9 @@
   "supabase_url",
   "column_break_yqdi",
   "supabase_api_key",
-  "supabase_service_api_key"
+  "supabase_service_api_key",
+  "section_break_xifn",
+  "lead_fields"
  ],
  "fields": [
   {
@@ -30,13 +32,22 @@
    "fieldname": "supabase_service_api_key",
    "fieldtype": "Password",
    "label": "Supabase Service API Key"
+  },
+  {
+   "fieldname": "section_break_xifn",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lead_fields",
+   "fieldtype": "Table",
+   "options": "Supabase Settings Lead Field"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-07-30 10:55:09.588047",
+ "modified": "2025-10-17 11:14:29.001525",
  "modified_by": "Administrator",
  "module": "Sowaanerp Supabase",
  "name": "Supabase Settings",

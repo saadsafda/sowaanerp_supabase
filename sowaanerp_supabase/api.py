@@ -144,8 +144,16 @@ def sync_calls_to_leads():
     settings = get_settings()
     SUPABASE_URL = settings.supabase_url
     SUPABASE_KEY = settings.supabase_api_key
-    company_name = frappe.get_site_config().host_name if frappe.get_site_config().host_name else None
 
+    site_config = frappe.get_site_config()
+    company_name = None
+    # Check if 'domains' key exists and has at least one value
+    if "domains" in site_config and site_config["domains"]:
+        company_name = site_config["domains"][0]
+        
+
+
+    print(f"Using company name: {company_name}")
     # 2. Connect to Supabase
     supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
@@ -206,6 +214,21 @@ def sync_calls_to_leads():
             lead_doc.phone = phone
             call_notes_response = supabase.table("Calls").select("*").eq("contact_id", contact_id).execute()
             call_notes = call_notes_response.data
+
+            for field in settings.lead_fields:
+                erp_field = field.erp_field
+                supabase_field = field.supabase_field
+                default_value = field.default
+
+                # Determine the value to set on lead_doc
+                if not supabase_field:
+                    value = default_value
+                else:
+                    value = contact.get(supabase_field)
+
+                # Only set if erp_field is valid and value is not None
+                if erp_field and value is not None:
+                    lead_doc.set(erp_field, value)
 
             if assign_email:
                 try:
