@@ -186,6 +186,7 @@ def sync_calls_to_leads():
                         "name": lead,
                         "description": f"Lead assigned from contact {contact_id}"
                     })
+                    frappe.db.commit()
                 except Exception as e:
                     frappe.log_error(f"Failed to assign Lead {lead} to {assign_email}: {str(e)}")
             if call_notes:
@@ -241,6 +242,7 @@ def sync_calls_to_leads():
                         "name": lead_doc.name,
                         "description": f"Lead assigned from contact {contact_id}"
                     })
+                    frappe.db.commit()
                 except Exception as e:
                     frappe.log_error(f"Failed to assign Lead {lead_doc.name} to {assign_email}: {str(e)}")
             
